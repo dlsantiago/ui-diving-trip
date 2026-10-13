@@ -4,9 +4,10 @@
     <div class="header-content">
       <div class="brand" (click)="resetearBusqueda()">
         <div class="brand-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M2 12h20M2 12a10 10 0 0 1 18-6M2 12a10 10 0 0 0 18 6"/>
-            <circle cx="12" cy="12" r="4"/>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M2 12h20M2 12a10 10 0 0 1 18-6M2 12a10 10 0 0 0 18 6" />
+            <circle cx="12" cy="12" r="4" />
           </svg>
         </div>
         <div class="brand-text">
@@ -18,16 +19,16 @@
       <div class="header-actions" *ngIf="viaje">
         <a [href]="getZipUrl()" class="btn btn-primary btn-zip-header" download>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-            <polyline points="7 10 12 15 17 10"/>
-            <line x1="12" y1="15" x2="12" y2="3"/>
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
           </svg>
           <span>Descargar ZIP</span>
         </a>
         <button class="btn btn-secondary" (click)="resetearBusqueda()" title="Buscar otro viaje">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"/>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
           <span class="desktop-only">Cambiar Viaje</span>
         </button>
@@ -40,11 +41,11 @@
     <section class="search-hero" *ngIf="!viaje && !isLoading">
       <div class="hero-card">
         <div class="hero-badge">
-          <span class="pulse-dot"></span> Acceso Seguro &middot; Temporal 24 Horas
+          <span class="pulse-dot"></span> Acceso Seguro &middot; Temporal 48 Horas
         </div>
         <h1 class="hero-title">Álbum de Viaje de Buceo</h1>
         <p class="hero-description">
-          Introduce el identificador único del viaje para ver la bitácora de inmersiones, 
+          Introduce el identificador único del viaje para ver la bitácora de inmersiones,
           explorar la galería fotográfica de alta resolución y descargar el paquete completo en ZIP.
         </p>
 
@@ -52,53 +53,42 @@
           <div class="form-inputs-group">
             <div class="input-wrapper">
               <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="4" width="18" height="16" rx="3"/>
-                <circle cx="9" cy="10" r="2"/>
-                <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+                <rect x="3" y="4" width="18" height="16" rx="3" />
+                <circle cx="9" cy="10" r="2" />
+                <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
               </svg>
-              <input 
-                type="number" 
-                [(ngModel)]="inputId" 
-                name="tripId" 
-                placeholder="ID del Viaje (ej: 1, 42...)" 
-                required
-                min="1"
-                autofocus
-              />
+              <input type="number" [(ngModel)]="inputId" name="tripId" placeholder="ID del Viaje (ej: 1, 42...)"
+                required min="1" autofocus />
             </div>
 
             <div class="input-wrapper">
               <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
               </svg>
-              <input 
-                type="password" 
-                [(ngModel)]="inputPassword" 
-                name="tripPassword" 
-                placeholder="Contraseña de acceso" 
-                required
-              />
+              <input type="password" [(ngModel)]="inputPassword" name="tripPassword" placeholder="Contraseña de acceso"
+                required />
             </div>
           </div>
 
           <button type="submit" class="btn btn-primary btn-search" [disabled]="!inputId || !inputPassword">
             <span>Ver Expedición</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="5" y1="12" x2="19" y2="12"/>
-              <polyline points="12 5 19 12 12 19"/>
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
             </svg>
           </button>
         </form>
 
         <div class="error-banner" *ngIf="errorMessage">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"/>
-            <line x1="12" y1="8" x2="12" y2="12"/>
-            <line x1="12" y1="16" x2="12.01" y2="16"/>
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
           </svg>
           <div>
-            <strong>{{ isExpired ? 'Enlace Caducado o No Encontrado' : (isUnauthorized ? 'Acceso Denegado' : 'Aviso') }}</strong>
+            <strong>{{ isExpired ? 'Enlace Caducado o No Encontrado' : (isUnauthorized ? 'Acceso Denegado' : 'Aviso')
+              }}</strong>
             <p>{{ errorMessage }}</p>
           </div>
         </div>
@@ -121,7 +111,7 @@
           <div class="feature-item">
             <div class="feature-icon">⏳</div>
             <div class="feature-text">
-              <h4>Acceso 24 Horas</h4>
+              <h4>Acceso 48 Horas</h4>
               <p>Enlaces directos optimizados y temporales</p>
             </div>
           </div>
@@ -142,17 +132,17 @@
 
     <!-- 3. Trip Loaded Content -->
     <div class="trip-dashboard" *ngIf="viaje && !isLoading">
-      
+
       <!-- Trip Banner -->
       <section class="trip-banner">
         <div class="banner-top">
           <div class="trip-id-badge">Expedición #{{ viaje.id }}</div>
-          
+
           <!-- Expiration countdown pill -->
           <div class="expiry-pill" [class.danger]="isExpired">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"/>
-              <polyline points="12 6 12 12 16 14"/>
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
             </svg>
             <span>
               <strong>Válido:</strong> {{ tiempoRestante }}
@@ -166,10 +156,10 @@
         <div class="trip-meta-row">
           <div class="meta-item" *ngIf="viaje.fechaInicio || viaje.fechaFin">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-              <line x1="16" y1="2" x2="16" y2="6"/>
-              <line x1="8" y1="2" x2="8" y2="6"/>
-              <line x1="3" y1="10" x2="21" y2="10"/>
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
             </svg>
             <span>
               {{ viaje.fechaInicio ? (viaje.fechaInicio | date:'mediumDate') : '' }}
@@ -180,18 +170,18 @@
 
           <div class="meta-item">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-              <path d="M2 17l10 5 10-5"/>
-              <path d="M2 12l10 5 10-5"/>
+              <path d="M12 2L2 7l10 5 10-5-10-5z" />
+              <path d="M2 17l10 5 10-5" />
+              <path d="M2 12l10 5 10-5" />
             </svg>
             <span>{{ viaje.inmersiones.length || 0 }} inmersiones</span>
           </div>
 
           <div class="meta-item">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="3" width="18" height="18" rx="2"/>
-              <circle cx="8.5" cy="8.5" r="1.5"/>
-              <polyline points="21 15 16 10 5 21"/>
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <polyline points="21 15 16 10 5 21" />
             </svg>
             <span>{{ getTotalFotos() }} fotografías</span>
           </div>
@@ -205,9 +195,9 @@
           </div>
           <a [href]="getZipUrl()" class="btn btn-primary btn-lg" download>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-              <polyline points="7 10 12 15 17 10"/>
-              <line x1="12" y1="15" x2="12" y2="3"/>
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
             </svg>
             <span>Descargar Álbum Completo (ZIP)</span>
           </a>
@@ -224,18 +214,14 @@
         </div>
 
         <div class="photo-grid">
-          <div 
-            class="photo-card" 
-            *ngFor="let foto of viaje.fotosViaje; let i = index" 
-            (click)="abrirLightbox(foto)"
-          >
+          <div class="photo-card" *ngFor="let foto of viaje.fotosViaje; let i = index" (click)="abrirLightbox(foto)">
             <img [src]="foto" [alt]="'Foto del viaje ' + (i + 1)" loading="lazy" />
             <div class="photo-overlay">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="11" cy="11" r="8"/>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                <line x1="11" y1="8" x2="11" y2="14"/>
-                <line x1="8" y1="11" x2="14" y2="11"/>
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                <line x1="11" y1="8" x2="11" y2="14" />
+                <line x1="8" y1="11" x2="14" y2="11" />
               </svg>
             </div>
           </div>
@@ -257,7 +243,7 @@
 
         <div class="inmersiones-list" *ngIf="viaje.inmersiones && viaje.inmersiones.length > 0">
           <article class="inmersion-card" *ngFor="let inm of viaje.inmersiones">
-            
+
             <!-- Inmersion header -->
             <div class="inmersion-header">
               <div class="inmersion-title-group">
@@ -269,8 +255,8 @@
                 <!-- Zone Pill -->
                 <span class="badge badge-zone" *ngIf="inm.zona">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                    <circle cx="12" cy="10" r="3"/>
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                    <circle cx="12" cy="10" r="3" />
                   </svg>
                   {{ inm.zona }}
                 </span>
@@ -278,8 +264,8 @@
                 <!-- Depth Pill -->
                 <span class="badge badge-depth" *ngIf="inm.profundidadMetros != null">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="12" y1="5" x2="12" y2="19"/>
-                    <polyline points="19 12 12 19 5 12"/>
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <polyline points="19 12 12 19 5 12" />
                   </svg>
                   {{ inm.profundidadMetros }} m
                 </span>
@@ -292,18 +278,15 @@
                 Fotografías submarinas ({{ inm.fotosInmersion.length }})
               </h4>
               <div class="photo-grid photo-grid-sm">
-                <div 
-                  class="photo-card" 
-                  *ngFor="let foto of inm.fotosInmersion; let j = index" 
-                  (click)="abrirLightbox(foto)"
-                >
+                <div class="photo-card" *ngFor="let foto of inm.fotosInmersion; let j = index"
+                  (click)="abrirLightbox(foto)">
                   <img [src]="foto" [alt]="inm.nombre + ' foto ' + (j + 1)" loading="lazy" />
                   <div class="photo-overlay">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <circle cx="11" cy="11" r="8"/>
-                      <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                      <line x1="11" y1="8" x2="11" y2="14"/>
-                      <line x1="8" y1="11" x2="14" y2="11"/>
+                      <circle cx="11" cy="11" r="8" />
+                      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                      <line x1="11" y1="8" x2="11" y2="14" />
+                      <line x1="8" y1="11" x2="14" y2="11" />
                     </svg>
                   </div>
                 </div>
@@ -327,12 +310,8 @@
         &times;
       </button>
 
-      <button 
-        class="lightbox-nav lightbox-prev" 
-        (click)="fotoAnterior($event)" 
-        *ngIf="allPhotos.length > 1"
-        title="Foto anterior"
-      >
+      <button class="lightbox-nav lightbox-prev" (click)="fotoAnterior($event)" *ngIf="allPhotos.length > 1"
+        title="Foto anterior">
         &#10094;
       </button>
 
@@ -346,12 +325,8 @@
         </div>
       </div>
 
-      <button 
-        class="lightbox-nav lightbox-next" 
-        (click)="fotoSiguiente($event)" 
-        *ngIf="allPhotos.length > 1"
-        title="Foto siguiente"
-      >
+      <button class="lightbox-nav lightbox-next" (click)="fotoSiguiente($event)" *ngIf="allPhotos.length > 1"
+        title="Foto siguiente">
         &#10095;
       </button>
     </div>

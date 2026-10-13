@@ -138,7 +138,7 @@ export class AppComponent implements OnInit, OnDestroy {
           this.errorMessage = 'Contraseña incorrecta. Por favor, verifica la clave del viaje.';
         } else if (err.status === 404) {
           this.isExpired = true;
-          this.errorMessage = 'El viaje no existe o el enlace ha caducado (más de 24 horas transcurridas).';
+          this.errorMessage = 'El viaje no existe o el enlace ha caducado (más de 48 horas transcurridas).';
         } else if (err.status === 0) {
           this.errorMessage = 'No se pudo conectar con el servidor backend. Comprueba que el servicio esté corriendo.';
         } else {
