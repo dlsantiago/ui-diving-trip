@@ -216,8 +216,21 @@
 
 .search-form {
   display: flex;
-  gap: 0.75rem;
+  flex-direction: column;
+  gap: 1rem;
   margin-bottom: 1.5rem;
+}
+
+.form-inputs-group {
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .form-inputs-group {
+    flex-direction: column;
+  }
 }
 
 .input-wrapper {
@@ -821,7 +834,7 @@
     grid-template-columns: 1fr;
   }
 
-  .search-form {
+  .form-inputs-group {
     flex-direction: column;
   }
 

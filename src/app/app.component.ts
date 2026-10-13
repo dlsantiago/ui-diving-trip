@@ -19,12 +19,15 @@ export class AppComponent implements OnInit, OnDestroy {
   private viajeService = inject(ViajeService);
 
   inputId: string = '';
+  inputPassword: string = '';
+  currentPassword: string = '';
   viajeId: number | null = null;
   viaje: ViajeResponse | null = null;
 
   isLoading: boolean = false;
   errorMessage: string | null = null;
   isExpired: boolean = false;
+  isUnauthorized: boolean = false;
 
   // Countdown timer
   tiempoRestante: string = '';
@@ -39,18 +42,32 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.querySub = this.route.queryParams.subscribe(params => {
       const idParam = params['id'];
+      const pwdParam = params['password'] || params['pwd'];
+
       if (idParam) {
         const idNum = Number(idParam);
         if (!isNaN(idNum) && idNum > 0) {
           this.inputId = String(idNum);
           this.viajeId = idNum;
-          this.cargarViaje(idNum);
+
+          if (pwdParam) {
+            this.inputPassword = String(pwdParam);
+            this.currentPassword = String(pwdParam);
+            this.cargarViaje(idNum, this.currentPassword);
+          } else {
+            // Prompt for password if not provided in URL
+            this.viaje = null;
+            this.isLoading = false;
+            this.errorMessage = null;
+          }
           return;
         }
       }
-      // If no valid ID param is found, show prompt
+      // If no valid ID param is found, show full search prompt
       this.viaje = null;
       this.viajeId = null;
+      this.inputPassword = '';
+      this.currentPassword = '';
       this.isLoading = false;
       this.errorMessage = null;
     });
@@ -62,51 +79,64 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   buscarViaje(): void {
-    const trimmed = this.inputId.trim();
-    if (!trimmed) return;
-    const id = Number(trimmed);
+    const trimmedId = this.inputId.trim();
+    if (!trimmedId) {
+      this.errorMessage = 'Por favor, introduce el ID del viaje.';
+      return;
+    }
+    const id = Number(trimmedId);
     if (isNaN(id) || id <= 0) {
       this.errorMessage = 'Por favor, introduce un número de ID válido.';
       return;
     }
 
-    // Update query params in URL
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { id: id },
-      queryParamsHandling: 'merge'
-    });
+    const trimmedPwd = this.inputPassword.trim();
+    if (!trimmedPwd) {
+      this.errorMessage = 'Por favor, introduce la contraseña de acceso al viaje.';
+      return;
+    }
+
+    this.viajeId = id;
+    this.cargarViaje(id, trimmedPwd);
   }
 
   resetearBusqueda(): void {
     this.viaje = null;
     this.viajeId = null;
     this.inputId = '';
+    this.inputPassword = '';
+    this.currentPassword = '';
     this.errorMessage = null;
     this.isExpired = false;
+    this.isUnauthorized = false;
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { id: null },
+      queryParams: { id: null, password: null, pwd: null },
       queryParamsHandling: 'merge'
     });
   }
 
-  cargarViaje(id: number): void {
+  cargarViaje(id: number, password?: string): void {
     this.isLoading = true;
     this.errorMessage = null;
     this.isExpired = false;
+    this.isUnauthorized = false;
     this.viaje = null;
 
-    this.viajeService.getViaje(id).subscribe({
+    this.viajeService.getViaje(id, password).subscribe({
       next: (data) => {
         this.viaje = data;
+        this.currentPassword = password || '';
         this.isLoading = false;
         this.recolectarFotos(data);
         this.iniciarCuentaAtras(data.expiraEn);
       },
       error: (err) => {
         this.isLoading = false;
-        if (err.status === 404) {
+        if (err.status === 401) {
+          this.isUnauthorized = true;
+          this.errorMessage = 'Contraseña incorrecta. Por favor, verifica la clave del viaje.';
+        } else if (err.status === 404) {
           this.isExpired = true;
           this.errorMessage = 'El viaje no existe o el enlace ha caducado (más de 24 horas transcurridas).';
         } else if (err.status === 0) {
@@ -120,7 +150,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   getZipUrl(): string {
     if (!this.viajeId) return '#';
-    return this.viajeService.getZipUrl(this.viajeId);
+    return this.viajeService.getZipUrl(this.viajeId, this.currentPassword);
   }
 
   getTotalFotos(): number {
