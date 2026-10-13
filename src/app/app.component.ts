@@ -18,7 +18,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private viajeService = inject(ViajeService);
 
-  inputId: string = '';
+  inputId: string | number = '';
   inputPassword: string = '';
   currentPassword: string = '';
   viajeId: number | null = null;
@@ -79,18 +79,18 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   buscarViaje(): void {
-    const trimmedId = this.inputId.trim();
-    if (!trimmedId) {
+    const rawId = String(this.inputId ?? '').trim();
+    if (!rawId) {
       this.errorMessage = 'Por favor, introduce el ID del viaje.';
       return;
     }
-    const id = Number(trimmedId);
+    const id = Number(rawId);
     if (isNaN(id) || id <= 0) {
       this.errorMessage = 'Por favor, introduce un número de ID válido.';
       return;
     }
 
-    const trimmedPwd = this.inputPassword.trim();
+    const trimmedPwd = String(this.inputPassword ?? '').trim();
     if (!trimmedPwd) {
       this.errorMessage = 'Por favor, introduce la contraseña de acceso al viaje.';
       return;
