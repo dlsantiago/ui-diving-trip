@@ -319,8 +319,25 @@
 }
 
 .btn-search {
-  padding: 0 1.75rem;
+  min-height: 60px;
+  padding: 1.25rem 2.25rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-radius: var(--radius-full);
   flex-shrink: 0;
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  touch-action: manipulation;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+}
+
+.btn-search svg {
+  width: 20px;
+  height: 20px;
 }
 
 .error-banner {
