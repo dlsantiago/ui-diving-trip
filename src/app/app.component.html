@@ -4,14 +4,10 @@
     <div class="header-content">
       <div class="brand" (click)="resetearBusqueda()">
         <div class="brand-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-            stroke-linejoin="round">
-            <path d="M2 12h20M2 12a10 10 0 0 1 18-6M2 12a10 10 0 0 0 18 6" />
-            <circle cx="12" cy="12" r="4" />
-          </svg>
+          <img src="assets/ic_launcher_round.webp" alt="Deco.9 Logbook" class="brand-logo-img" />
         </div>
         <div class="brand-text">
-          <span class="brand-name">AquaLog</span>
+          <span class="brand-name">Deco.9 Logbook</span>
           <span class="brand-tag">Dive Expeditions</span>
         </div>
       </div>
@@ -43,15 +39,39 @@
         <div class="hero-badge">
           <span class="pulse-dot"></span> Acceso Seguro &middot; Temporal 48 Horas
         </div>
-        <h1 class="hero-title">Álbum de Viaje de Buceo</h1>
-        <p class="hero-description">
-          Introduce el identificador único del viaje para ver la bitácora de inmersiones,
-          explorar la galería fotográfica de alta resolución y descargar el paquete completo en ZIP.
-        </p>
+        <ng-container *ngIf="isIdFromUrl; else generalHeroContent">
+          <h1 class="hero-title">Expedición #{{ inputId }}</h1>
+          <p class="hero-description">
+            Introduce la contraseña de acceso asignada a este viaje para desbloquear la bitácora de inmersiones y el álbum de fotos.
+          </p>
+        </ng-container>
+
+        <ng-template #generalHeroContent>
+          <h1 class="hero-title">Álbum de Viaje de Buceo</h1>
+          <p class="hero-description">
+            Introduce el identificador único del viaje para ver la bitácora de inmersiones,
+            explorar la galería fotográfica de alta resolución y descargar el paquete completo en ZIP.
+          </p>
+        </ng-template>
 
         <form class="search-form" (ngSubmit)="buscarViaje()">
+          <!-- Chip informativo cuando el ID proviene de la URL -->
+          <div class="trip-id-badge" *ngIf="isIdFromUrl">
+            <div class="trip-id-info">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+              <span>Expedición <strong>#{{ inputId }}</strong></span>
+            </div>
+            <button type="button" class="btn-change-id" (click)="cambiarIdManual()" title="Introducir otro número de viaje">
+              Cambiar ID
+            </button>
+          </div>
+
           <div class="form-inputs-group">
-            <div class="input-wrapper">
+            <!-- Campo de ID solo visible si NO vino en la URL -->
+            <div class="input-wrapper" *ngIf="!isIdFromUrl">
               <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="4" width="18" height="16" rx="3" />
                 <circle cx="9" cy="10" r="2" />
@@ -61,18 +81,19 @@
                 required min="1" autofocus />
             </div>
 
-            <div class="input-wrapper">
+            <!-- Campo de contraseña siempre visible -->
+            <div class="input-wrapper input-password-wrapper">
               <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                 <path d="M7 11V7a5 5 0 0 1 10 0v4" />
               </svg>
               <input type="password" [(ngModel)]="inputPassword" name="tripPassword" placeholder="Contraseña de acceso"
-                required />
+                required autofocus />
             </div>
           </div>
 
           <button type="submit" class="btn btn-primary btn-search" [disabled]="!inputId || !inputPassword">
-            <span>Ver Expedición</span>
+            <span>{{ isIdFromUrl ? 'Desbloquear Expedición' : 'Ver Expedición' }}</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="5" y1="12" x2="19" y2="12" />
               <polyline points="12 5 19 12 12 19" />
@@ -269,7 +290,38 @@
                   </svg>
                   {{ inm.profundidadMetros }} m
                 </span>
+
+                <!-- Duration Pill -->
+                <span class="badge badge-duration" *ngIf="inm.duracionMinutos != null">
+                  ⏱️ {{ inm.duracionMinutos }} min
+                </span>
+
+                <!-- Temperature Pill -->
+                <span class="badge badge-temp" *ngIf="inm.temperaturaAgua != null">
+                  🌡️ {{ inm.temperaturaAgua }} °C
+                </span>
+
+                <!-- Gas Pill -->
+                <span class="badge badge-gas" *ngIf="inm.tipoGas">
+                  🤿 {{ inm.tipoGas }}
+                </span>
+
+                <!-- Pressure Pill -->
+                <span class="badge badge-pressure" *ngIf="inm.presionInicial != null">
+                  🫧 {{ inm.presionInicial }} &rarr; {{ inm.presionFinal != null ? inm.presionFinal : '?' }} bar
+                </span>
+
+                <!-- Weight Pill -->
+                <span class="badge badge-weight" *ngIf="inm.lastreKg != null">
+                  ⚖️ {{ inm.lastreKg }} kg
+                </span>
               </div>
+            </div>
+
+            <!-- Notes if present -->
+            <div class="inmersion-notes" *ngIf="inm.notas">
+              <span class="notes-icon">📝</span>
+              <p class="notes-text">{{ inm.notas }}</p>
             </div>
 
             <!-- Photos for this inmersion -->
@@ -333,6 +385,6 @@
   </div>
 
   <footer class="app-footer">
-    <p>AquaLog Dive Explorer &bull; Integrado con Telegram Bot API &bull; Streaming ZIP de alta eficiencia</p>
+    <p>Deco.9 Logbook &bull; Integrado con Telegram Bot API &bull; Streaming ZIP de alta eficiencia</p>
   </footer>
 </div>

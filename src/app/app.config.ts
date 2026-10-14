@@ -5,6 +5,6 @@ import { provideRouter, withComponentInputBinding } from '@angular/router';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideHttpClient(withFetch()),
-    provideRouter([], withComponentInputBinding())
+    provideRouter([{ path: '**', children: [] }], withComponentInputBinding())
   ]
 };

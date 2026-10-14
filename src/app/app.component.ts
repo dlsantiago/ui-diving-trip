@@ -28,6 +28,7 @@ export class AppComponent implements OnInit, OnDestroy {
   errorMessage: string | null = null;
   isExpired: boolean = false;
   isUnauthorized: boolean = false;
+  isIdFromUrl: boolean = false;
 
   // Countdown timer
   tiempoRestante: string = '';
@@ -41,36 +42,60 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.querySub = this.route.queryParams.subscribe(params => {
-      const idParam = params['id'];
+      const detectedId = this.detectarIdDeUrl(params);
       const pwdParam = params['password'] || params['pwd'];
 
-      if (idParam) {
-        const idNum = Number(idParam);
-        if (!isNaN(idNum) && idNum > 0) {
-          this.inputId = String(idNum);
-          this.viajeId = idNum;
+      if (detectedId) {
+        this.isIdFromUrl = true;
+        this.inputId = String(detectedId);
+        this.viajeId = detectedId;
 
-          if (pwdParam) {
-            this.inputPassword = String(pwdParam);
-            this.currentPassword = String(pwdParam);
-            this.cargarViaje(idNum, this.currentPassword);
-          } else {
-            // Prompt for password if not provided in URL
-            this.viaje = null;
-            this.isLoading = false;
-            this.errorMessage = null;
-          }
-          return;
+        if (pwdParam) {
+          this.inputPassword = String(pwdParam);
+          this.currentPassword = String(pwdParam);
+          this.cargarViaje(detectedId, this.currentPassword);
+        } else {
+          // Si el ID está en la URL pero no la contraseña, mostramos solo el campo de contraseña
+          this.viaje = null;
+          this.isLoading = false;
+          this.errorMessage = null;
         }
+        return;
       }
-      // If no valid ID param is found, show full search prompt
+
+      // Si no se encuentra un ID en la URL, mostrar el formulario completo
+      this.isIdFromUrl = false;
       this.viaje = null;
       this.viajeId = null;
+      this.inputId = '';
       this.inputPassword = '';
       this.currentPassword = '';
       this.isLoading = false;
       this.errorMessage = null;
     });
+  }
+
+  private detectarIdDeUrl(params: any): number | null {
+    // 1. Comprobar query params (?id=1, ?trip=1, ?viaje=1)
+    const qId = params['id'] || params['trip'] || params['viaje'];
+    if (qId) {
+      const num = Number(qId);
+      if (!isNaN(num) && num > 0) {
+        return num;
+      }
+    }
+
+    // 2. Comprobar segmentos del path (/1, /viaje/1, /viajes-inmersion/1)
+    const pathname = window.location.pathname || '';
+    const segments = pathname.split('/').filter(Boolean);
+    for (let i = segments.length - 1; i >= 0; i--) {
+      const num = Number(segments[i]);
+      if (!isNaN(num) && num > 0) {
+        return num;
+      }
+    }
+
+    return null;
   }
 
   ngOnDestroy(): void {
@@ -100,6 +125,19 @@ export class AppComponent implements OnInit, OnDestroy {
     this.cargarViaje(id, trimmedPwd);
   }
 
+  cambiarIdManual(): void {
+    this.isIdFromUrl = false;
+    this.viaje = null;
+    this.viajeId = null;
+    this.inputId = '';
+    this.inputPassword = '';
+    this.currentPassword = '';
+    this.errorMessage = null;
+    this.isExpired = false;
+    this.isUnauthorized = false;
+    this.router.navigate(['/'], { queryParams: {} });
+  }
+
   resetearBusqueda(): void {
     this.viaje = null;
     this.viajeId = null;
@@ -109,11 +147,8 @@ export class AppComponent implements OnInit, OnDestroy {
     this.errorMessage = null;
     this.isExpired = false;
     this.isUnauthorized = false;
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { id: null, password: null, pwd: null },
-      queryParamsHandling: 'merge'
-    });
+    this.isIdFromUrl = false;
+    this.router.navigate(['/'], { queryParams: {} });
   }
 
   cargarViaje(id: number, password?: string): void {
