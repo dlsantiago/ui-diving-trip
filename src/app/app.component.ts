@@ -160,6 +160,9 @@ export class AppComponent implements OnInit, OnDestroy {
 
     this.viajeService.getViaje(id, password).subscribe({
       next: (data) => {
+        if (data.inmersiones && data.inmersiones.length > 0) {
+          data.inmersiones.sort((a, b) => (a.orden ?? 0) - (b.orden ?? 0));
+        }
         this.viaje = data;
         this.currentPassword = password || '';
         this.isLoading = false;
