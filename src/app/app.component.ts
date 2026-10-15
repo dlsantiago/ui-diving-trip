@@ -35,10 +35,13 @@ export class AppComponent implements OnInit, OnDestroy {
   private timerSub?: Subscription;
   private querySub?: Subscription;
 
-  // Lightbox / Modal
-  selectedPhoto: string | null = null;
-  allPhotos: string[] = [];
-  currentPhotoIndex: number = 0;
+  // Lightbox / Modal (fotos + vídeos unificados)
+  selectedMedia: string | null = null;
+  allPhotos: string[] = [];   // solo fotos, para el lightbox de imágenes
+  allVideos: string[] = [];   // solo vídeos
+  allMedia: string[] = [];    // fotos + vídeos mezclados en orden de aparición
+  currentMediaIndex: number = 0;
+  currentPhotoIndex: number = 0; // mantenido por compatibilidad
 
   ngOnInit(): void {
     this.querySub = this.route.queryParams.subscribe(params => {
@@ -166,7 +169,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.viaje = data;
         this.currentPassword = password || '';
         this.isLoading = false;
-        this.recolectarFotos(data);
+        this.recolectarMedia(data);
         this.iniciarCuentaAtras(data.expiraEn);
       },
       error: (err) => {
@@ -200,19 +203,47 @@ export class AppComponent implements OnInit, OnDestroy {
     return count;
   }
 
-  private recolectarFotos(data: ViajeResponse): void {
-    const list: string[] = [];
+  getTotalVideos(): number {
+    if (!this.viaje) return 0;
+    let count = (this.viaje.videosViaje || []).length;
+    for (const inm of (this.viaje.inmersiones || [])) {
+      count += (inm.videosInmersion || []).length;
+    }
+    return count;
+  }
+
+  getTotalMedia(): number {
+    return this.getTotalFotos() + this.getTotalVideos();
+  }
+
+  private recolectarMedia(data: ViajeResponse): void {
+    const fotos: string[] = [];
+    const videos: string[] = [];
+    const media: string[] = [];
+
     if (data.fotosViaje) {
-      list.push(...data.fotosViaje);
+      fotos.push(...data.fotosViaje);
+      media.push(...data.fotosViaje);
+    }
+    if (data.videosViaje) {
+      videos.push(...data.videosViaje);
+      media.push(...data.videosViaje);
     }
     if (data.inmersiones) {
       for (const inm of data.inmersiones) {
         if (inm.fotosInmersion) {
-          list.push(...inm.fotosInmersion);
+          fotos.push(...inm.fotosInmersion);
+          media.push(...inm.fotosInmersion);
+        }
+        if (inm.videosInmersion) {
+          videos.push(...inm.videosInmersion);
+          media.push(...inm.videosInmersion);
         }
       }
     }
-    this.allPhotos = list;
+    this.allPhotos = fotos;
+    this.allVideos = videos;
+    this.allMedia = media;
   }
 
   private iniciarCuentaAtras(expiraEnIso: string): void {
@@ -241,26 +272,39 @@ export class AppComponent implements OnInit, OnDestroy {
 
   // Lightbox functions
   abrirLightbox(url: string): void {
-    const idx = this.allPhotos.indexOf(url);
-    this.currentPhotoIndex = idx >= 0 ? idx : 0;
-    this.selectedPhoto = url;
+    const idx = this.allMedia.indexOf(url);
+    this.currentMediaIndex = idx >= 0 ? idx : 0;
+    this.currentPhotoIndex = this.currentMediaIndex;
+    this.selectedMedia = url;
   }
 
   cerrarLightbox(): void {
-    this.selectedPhoto = null;
+    this.selectedMedia = null;
   }
 
-  fotoSiguiente(e: Event): void {
-    e.stopPropagation();
-    if (this.allPhotos.length === 0) return;
-    this.currentPhotoIndex = (this.currentPhotoIndex + 1) % this.allPhotos.length;
-    this.selectedPhoto = this.allPhotos[this.currentPhotoIndex];
+  isVideo(url: string | null): boolean {
+    if (!url) return false;
+    return this.allVideos.includes(url);
   }
 
-  fotoAnterior(e: Event): void {
+  mediaSiguiente(e: Event): void {
     e.stopPropagation();
-    if (this.allPhotos.length === 0) return;
-    this.currentPhotoIndex = (this.currentPhotoIndex - 1 + this.allPhotos.length) % this.allPhotos.length;
-    this.selectedPhoto = this.allPhotos[this.currentPhotoIndex];
+    if (this.allMedia.length === 0) return;
+    this.currentMediaIndex = (this.currentMediaIndex + 1) % this.allMedia.length;
+    this.currentPhotoIndex = this.currentMediaIndex;
+    this.selectedMedia = this.allMedia[this.currentMediaIndex];
   }
+
+  mediaAnterior(e: Event): void {
+    e.stopPropagation();
+    if (this.allMedia.length === 0) return;
+    this.currentMediaIndex = (this.currentMediaIndex - 1 + this.allMedia.length) % this.allMedia.length;
+    this.currentPhotoIndex = this.currentMediaIndex;
+    this.selectedMedia = this.allMedia[this.currentMediaIndex];
+  }
+
+  /** @deprecated use mediaSiguiente */
+  fotoSiguiente(e: Event): void { this.mediaSiguiente(e); }
+  /** @deprecated use mediaAnterior */
+  fotoAnterior(e: Event): void { this.mediaAnterior(e); }
 }

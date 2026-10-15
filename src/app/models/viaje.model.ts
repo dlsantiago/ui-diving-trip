@@ -12,6 +12,7 @@ export interface InmersionResponse {
   notas?: string | null;
   orden: number;
   fotosInmersion: string[];
+  videosInmersion: string[];
 }
 
 export interface ViajeResponse {
@@ -22,5 +23,6 @@ export interface ViajeResponse {
   creadoEn: string;
   expiraEn: string;
   fotosViaje: string[];
+  videosViaje: string[];
   inmersiones: InmersionResponse[];
 }

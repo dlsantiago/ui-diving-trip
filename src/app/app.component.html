@@ -206,13 +206,21 @@
             </svg>
             <span>{{ getTotalFotos() }} fotografías</span>
           </div>
+
+          <div class="meta-item" *ngIf="getTotalVideos() > 0">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="23 7 16 12 23 17 23 7" />
+              <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+            </svg>
+            <span>{{ getTotalVideos() }} vídeos</span>
+          </div>
         </div>
 
         <!-- Download Action Card in banner -->
         <div class="download-banner-cta">
           <div class="download-info">
-            <h3>Descarga Todas las Fotografías</h3>
-            <p>Genera un archivo comprimido .ZIP en streaming con las carpetas organizadas por inmersión.</p>
+            <h3>Descarga Todas las Fotografías y Vídeos</h3>
+            <p>Genera un archivo comprimido .ZIP en streaming con fotos y vídeos organizados por inmersión.</p>
           </div>
           <a [href]="getZipUrl()" class="btn btn-primary btn-lg" download>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -244,6 +252,29 @@
                 <line x1="11" y1="8" x2="11" y2="14" />
                 <line x1="8" y1="11" x2="14" y2="11" />
               </svg>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Vídeos del Viaje -->
+      <section class="section-card" *ngIf="viaje.videosViaje && viaje.videosViaje.length > 0">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <h2 class="section-title">Vídeos del Viaje</h2>
+            <span class="count-badge video-badge">{{ viaje.videosViaje.length }} vídeos</span>
+          </div>
+        </div>
+
+        <div class="photo-grid">
+          <div class="video-card" *ngFor="let vid of viaje.videosViaje; let i = index" (click)="abrirLightbox(vid)">
+            <video [src]="vid" preload="metadata" muted playsinline class="video-thumb"></video>
+            <div class="video-play-overlay">
+              <div class="play-btn-circle">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="5 3 19 12 5 21 5 3" />
+                </svg>
+              </div>
             </div>
           </div>
         </div>
@@ -345,8 +376,33 @@
               </div>
             </div>
 
-            <div class="inmersion-no-photos" *ngIf="!inm.fotosInmersion || inm.fotosInmersion.length === 0">
-              <p>Sin fotos registradas para esta inmersión.</p>
+            <!-- Videos for this inmersion -->
+            <div class="inmersion-gallery" *ngIf="inm.videosInmersion && inm.videosInmersion.length > 0">
+              <h4 class="gallery-subtitle">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:4px">
+                  <polygon points="23 7 16 12 23 17 23 7" />
+                  <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+                </svg>
+                Vídeos submarinos ({{ inm.videosInmersion.length }})
+              </h4>
+              <div class="photo-grid photo-grid-sm">
+                <div class="video-card" *ngFor="let vid of inm.videosInmersion; let k = index"
+                  (click)="abrirLightbox(vid)">
+                  <video [src]="vid" preload="metadata" muted playsinline class="video-thumb"></video>
+                  <div class="video-play-overlay">
+                    <div class="play-btn-circle">
+                      <svg viewBox="0 0 24 24" fill="currentColor">
+                        <polygon points="5 3 19 12 5 21 5 3" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="inmersion-no-photos"
+              *ngIf="(!inm.fotosInmersion || inm.fotosInmersion.length === 0) && (!inm.videosInmersion || inm.videosInmersion.length === 0)">
+              <p>Sin fotos ni vídeos registrados para esta inmersión.</p>
             </div>
           </article>
         </div>
@@ -355,30 +411,41 @@
     </div>
   </main>
 
-  <!-- Lightbox Modal -->
-  <div class="lightbox-backdrop" *ngIf="selectedPhoto" (click)="cerrarLightbox()">
+  <!-- Lightbox Modal (fotos + vídeos) -->
+  <div class="lightbox-backdrop" *ngIf="selectedMedia" (click)="cerrarLightbox()">
     <div class="lightbox-dialog" (click)="$event.stopPropagation()">
       <button class="lightbox-close" (click)="cerrarLightbox()" title="Cerrar (Esc)">
         &times;
       </button>
 
-      <button class="lightbox-nav lightbox-prev" (click)="fotoAnterior($event)" *ngIf="allPhotos.length > 1"
-        title="Foto anterior">
+      <button class="lightbox-nav lightbox-prev" (click)="mediaAnterior($event)" *ngIf="allMedia.length > 1"
+        title="Anterior">
         &#10094;
       </button>
 
       <div class="lightbox-image-wrap">
-        <img [src]="selectedPhoto" alt="Vista ampliada" />
+        <!-- Vídeo -->
+        <video *ngIf="isVideo(selectedMedia)"
+          [src]="selectedMedia"
+          controls
+          autoplay
+          playsinline
+          class="lightbox-video">
+        </video>
+        <!-- Foto -->
+        <img *ngIf="!isVideo(selectedMedia)"
+          [src]="selectedMedia" alt="Vista ampliada" />
+
         <div class="lightbox-footer">
-          <span>Foto {{ currentPhotoIndex + 1 }} de {{ allPhotos.length }}</span>
-          <a [href]="selectedPhoto" target="_blank" rel="noopener noreferrer" class="lightbox-link" download>
-            Abrir original &nearr;
+          <span>{{ isVideo(selectedMedia) ? 'Vídeo' : 'Foto' }} {{ currentMediaIndex + 1 }} de {{ allMedia.length }}</span>
+          <a [href]="selectedMedia" target="_blank" rel="noopener noreferrer" class="lightbox-link" [download]="!isVideo(selectedMedia)">
+            {{ isVideo(selectedMedia) ? 'Abrir vídeo &nearr;' : 'Abrir original &nearr;' }}
           </a>
         </div>
       </div>
 
-      <button class="lightbox-nav lightbox-next" (click)="fotoSiguiente($event)" *ngIf="allPhotos.length > 1"
-        title="Foto siguiente">
+      <button class="lightbox-nav lightbox-next" (click)="mediaSiguiente($event)" *ngIf="allMedia.length > 1"
+        title="Siguiente">
         &#10095;
       </button>
     </div>
